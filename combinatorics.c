@@ -1,8 +1,12 @@
 #include <math.h>
-#include <stdio.h>
+#include <Python.h>
 #include <stdlib.h>
 
-long int Fibonacci(int n) /*Считает n-ое число Фибоначчи*/
+/**
+Определение функций
+*/
+
+int Fibonacci(int n) /*Считает n-ое число Фибоначчи*/
 {
 	if (n < 1) /*Возвращает -1, если аргумент неправильный*/
 		return -1;
@@ -10,7 +14,7 @@ long int Fibonacci(int n) /*Считает n-ое число Фибоначчи*
 	if ((n == 1)||(n == 2)) /*Первые два элемента последовательности Фибоначчи*/
 		return 1;
 
-	long int a, b, c, i; /*Объявление переменных*/
+	int a, b, c, i; /*Объявление переменных*/
 	
 	a = 1; /*Инициализация первых элементов*/
 	b = 1;
@@ -138,4 +142,58 @@ int* FactorInteger(int integer) /*Каноническое разложение 
 		}
 	divisors[j] = 0;
 	return divisors;
+}
+
+/**
+Определение объектов Python
+*/
+
+static PyObject* c_fibonacci(PyObject* self, PyObject* args)
+{
+	int n; /*Объявление переменной*/
+
+	if (!PyArg_ParseTuple(args, "i", &n)) /*Исключение ошибки аргумента*/
+		return NULL;
+
+	return Py_BuildValue("i", Fibonacci(n)); /*Возвращаем ответ с использованием функции Си*/
+}
+
+static PyObject* c_is_prime(PyObject* self, PyObject* args)
+{
+	int n; /*Объявление переменной*/
+
+	if (!PyArg_ParseTuple(args, "i", &n)) /*Исключение ошибки аргумента*/
+		return NULL;
+
+	return Py_BuildValue("i", PrimeQ(n)); /*Возвращаем ответ с использованием функции Си*/
+}
+
+static PyObject* c_prime(PyObject* self, PyObject* args)
+{
+	int n; /*Объявление переменной*/
+
+	if (!PyArg_ParseTuple(args, "i", &n)) /*Исключение ошибки аргумента*/
+		return NULL;
+
+	return Py_BuildValue("i", Prime(n)); /*Возвращаем ответ с использованием функции Си*/
+}
+
+static PyMethodDef combinatorics_methods[] = { /*Методы модуля*/
+	{"c_fibonacci", c_fibonacci, METH_VARARGS, "Возвращает элемент последовательности Фибоначчи"},
+	{"c_is_prime",  c_is_prime,  METH_VARARGS, "Проверяет, является ли число простым"},
+	{"c_prime",     c_prime,     METH_VARARGS, "Возвращает простое число"},
+	{NULL, NULL, 0, NULL}
+};
+
+static struct PyModuleDef combinatorics_module = {
+	PyModuleDef_HEAD_INIT,
+	"combinatorics",
+	"Функции для решения комбинаторных задач", 
+	-1,
+	combinatorics_methods
+};
+
+PyMODINIT_FUNC PyInit_combinatorics(void)
+{
+    return PyModule_Create(&combinatorics_module);
 }

@@ -117,16 +117,12 @@ int Inverse(int a, int m)
 int* FactorInteger(int integer) /*Каноническое разложение целого числа*/
 {
 	int d, i, j, n, p, s; /*объявление переменных*/
-	int *divisors, *integers;
+	int *divisors;
 
 	n = integer;
 	s = integer; /*size, т.е. размер массива целых чисел*/
 
-	integers = malloc(sizeof(int) * s); /*Массив целых чисел*/
 	divisors = malloc(sizeof(int) * 200); /*Массив простых делителей*/
-
-	for (i = 0; i < s; i++) /*Массив целых чисел заполняем единицами*/
-		integers[i] = 1;
 
 	for (i = 2, j = 0; i <= s; i++) 
 		if (n % i == 0) 

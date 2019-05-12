@@ -118,15 +118,15 @@ int Inverse(long a, long m)
     return olds % m;
 }
 
-int* FactorInteger(int integer) /*Каноническое разложение целого числа*/
+long* FactorInteger(long integer) /*Каноническое разложение целого числа*/
 {
-	int d, i, j, n, p, s; /*объявление переменных*/
-	int *divisors;
+	long d, i, j, n, p, s; /*объявление переменных*/
+	long *divisors;
 
 	n = integer;
 	s = integer; /*size, т.е. размер массива целых чисел*/
 
-	divisors = malloc(sizeof(int) * 200); /*Массив простых делителей*/
+	divisors = malloc(sizeof(long) * 200); /*Массив простых делителей*/
 
 	for (i = 2, j = 0; i <= s; i++) 
 		if (n % i == 0) 
@@ -165,7 +165,7 @@ static PyObject* c_is_prime(PyObject* self, PyObject* args)
 	if (!PyArg_ParseTuple(args, "i", &n)) /*Исключение ошибки аргумента*/
 		return NULL;
 
-	return Py_BuildValue("i", PrimeQ(n)); /*Возвращаем ответ с использованием функции Си*/
+	return Py_BuildValue("O", PrimeQ(n) ? Py_True : Py_False); /*Возвращаем ответ с использованием функции Си*/
 }
 
 static PyObject* c_prime(PyObject* self, PyObject* args)
@@ -180,32 +180,55 @@ static PyObject* c_prime(PyObject* self, PyObject* args)
 
 static PyObject* c_power_mod(PyObject* self, PyObject* args)
 {
-	long int a, n, m;
+	long int a, n, m; /*Объявление переменных*/
 
 	if (!PyArg_ParseTuple(args, "iii", &a, &n, &m)) /*Исключение ошибки аргумента*/
 		return NULL;
 
-	return Py_BuildValue("i", PowerMod(a, n, m));
+	return Py_BuildValue("i", PowerMod(a, n, m)); /*Возвращаем ответ с использованием функции Си*/
 }
 
 static PyObject* c_discrete_log(PyObject* self, PyObject* args)
 {
-	long int a, b, m;
+	long int a, b, m; /*Объявление переменных*/
 
 	if (!PyArg_ParseTuple(args, "iii", &a, &b, &m)) /*Исключение ошибки аргумента*/
 		return NULL;
 
-	return Py_BuildValue("i", DiscreteLog(a, b, m));
+	return Py_BuildValue("i", DiscreteLog(a, b, m)); /*Возвращаем ответ с использованием функции Си*/
 }
 
 static PyObject* c_inverse(PyObject* self, PyObject* args)
 {
-	long int a, m;
+	long int a, m; /*Объявление переменных*/
 
 	if (!PyArg_ParseTuple(args, "ii", &a, &m)) /*Исключение ошибки аргумента*/
 		return NULL;
 
-	return Py_BuildValue("i", Inverse(a, m));
+	return Py_BuildValue("i", Inverse(a, m)); /*Возвращаем ответ с использованием функции Си*/
+}
+
+static PyObject* c_factor_integer(PyObject* self, PyObject* args)
+{
+	long n; /*Объявление переменной*/
+	long *d; /*Объявление переменной*/
+
+	if (!PyArg_ParseTuple(args, "i", &n)) /*Исключение ошибки аргумента*/
+		return NULL;
+
+	d = FactorInteger(n); /*Вычисляем результат с использованием функции СИ*/
+
+	int i, l; /*Объявление переменных*/
+
+	for (l = 0; d[l]; l++) /*Вычисляем длину списка d*/
+		{}
+
+	PyObject* p = PyList_New(l); /*Создаём новый список (объект Python)*/
+
+	for (i = 0; i < l; i++)
+		PyList_SetItem(p, i, PyLong_FromLong(d[i])); /*Заполняем созданный список элементами d*/
+
+	return p; /*Возвращаем результат*/
 }
 
 static PyMethodDef combinatorics_methods[] = { /*Методы модуля*/
@@ -215,6 +238,7 @@ static PyMethodDef combinatorics_methods[] = { /*Методы модуля*/
 	{"c_power_mod",    c_power_mod,    METH_VARARGS, "Возводит число в степень в кольце вычетов"},
 	{"c_discrete_log", c_discrete_log, METH_VARARGS, "Логарифмирование в кольце вычетов"},
 	{"c_inverse",      c_inverse,      METH_VARARGS, "Возвращает обратный элемент в кольце вычетов"},
+	{"c_factor_integer", c_factor_integer, METH_VARARGS, "Возвращает каноническое разложение числа в формате [простой делитель, степень делителя, ...]"},
 	{NULL, NULL, 0, NULL}
 };
 

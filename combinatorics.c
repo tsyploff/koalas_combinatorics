@@ -67,7 +67,7 @@ int Prime(int n) /*Возвращет n-е простое число*/
 	return i - 1; /*Возвращаем нужное простое число*/
 }
 
-int PowerMod(int a, int n, int m) /*Возводит в степень по модулю m*/
+int PowerMod(long a, long n, long m) /*Возводит в степень по модулю m*/
 {
 	if (n == 1)
 		return a % m;
@@ -80,7 +80,7 @@ int PowerMod(int a, int n, int m) /*Возводит в степень по мо
 	}
 }
 
-int DiscreteLog(int a, int b, int m) /*Логарифмирование в кольце вычетов*/
+int DiscreteLog(long a, long b, long m) /*Логарифмирование в кольце вычетов*/
 {
 	int c = a;
 	int n = 1;
@@ -92,7 +92,7 @@ int DiscreteLog(int a, int b, int m) /*Логарифмирование в ко�
 	return n;
 }
 
-int Inverse(int a, int m)
+int Inverse(long a, long m)
 {
 
 	int quotient, i, j, k;
@@ -178,10 +178,43 @@ static PyObject* c_prime(PyObject* self, PyObject* args)
 	return Py_BuildValue("i", Prime(n)); /*Возвращаем ответ с использованием функции Си*/
 }
 
+static PyObject* c_power_mod(PyObject* self, PyObject* args)
+{
+	long int a, n, m;
+
+	if (!PyArg_ParseTuple(args, "iii", &a, &n, &m)) /*Исключение ошибки аргумента*/
+		return NULL;
+
+	return Py_BuildValue("i", PowerMod(a, n, m));
+}
+
+static PyObject* c_discrete_log(PyObject* self, PyObject* args)
+{
+	long int a, b, m;
+
+	if (!PyArg_ParseTuple(args, "iii", &a, &b, &m)) /*Исключение ошибки аргумента*/
+		return NULL;
+
+	return Py_BuildValue("i", DiscreteLog(a, b, m));
+}
+
+static PyObject* c_inverse(PyObject* self, PyObject* args)
+{
+	long int a, m;
+
+	if (!PyArg_ParseTuple(args, "ii", &a, &m)) /*Исключение ошибки аргумента*/
+		return NULL;
+
+	return Py_BuildValue("i", Inverse(a, m));
+}
+
 static PyMethodDef combinatorics_methods[] = { /*Методы модуля*/
-	{"c_fibonacci", c_fibonacci, METH_VARARGS, "Возвращает элемент последовательности Фибоначчи"},
-	{"c_is_prime",  c_is_prime,  METH_VARARGS, "Проверяет, является ли число простым"},
-	{"c_prime",     c_prime,     METH_VARARGS, "Возвращает простое число"},
+	{"c_fibonacci",    c_fibonacci,    METH_VARARGS, "Возвращает n-ый элемент последовательности Фибоначчи"},
+	{"c_is_prime",     c_is_prime,     METH_VARARGS, "Проверяет, является ли число простым"},
+	{"c_prime",        c_prime,        METH_VARARGS, "Возвращает n-ое простое число"},
+	{"c_power_mod",    c_power_mod,    METH_VARARGS, "Возводит число в степень в кольце вычетов"},
+	{"c_discrete_log", c_discrete_log, METH_VARARGS, "Логарифмирование в кольце вычетов"},
+	{"c_inverse",      c_inverse,      METH_VARARGS, "Возвращает обратный элемент в кольце вычетов"},
 	{NULL, NULL, 0, NULL}
 };
 

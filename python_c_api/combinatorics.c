@@ -180,7 +180,7 @@ static PyObject* c_prime(PyObject* self, PyObject* args)
 
 static PyObject* c_power_mod(PyObject* self, PyObject* args)
 {
-	long int a, n, m; /*Объявление переменных*/
+	long a, n, m; /*Объявление переменных*/
 
 	if (!PyArg_ParseTuple(args, "iii", &a, &n, &m)) /*Исключение ошибки аргумента*/
 		return NULL;
@@ -190,7 +190,7 @@ static PyObject* c_power_mod(PyObject* self, PyObject* args)
 
 static PyObject* c_discrete_log(PyObject* self, PyObject* args)
 {
-	long int a, b, m; /*Объявление переменных*/
+	long a, b, m; /*Объявление переменных*/
 
 	if (!PyArg_ParseTuple(args, "iii", &a, &b, &m)) /*Исключение ошибки аргумента*/
 		return NULL;
@@ -200,7 +200,7 @@ static PyObject* c_discrete_log(PyObject* self, PyObject* args)
 
 static PyObject* c_inverse(PyObject* self, PyObject* args)
 {
-	long int a, m; /*Объявление переменных*/
+	long a, m; /*Объявление переменных*/
 
 	if (!PyArg_ParseTuple(args, "ii", &a, &m)) /*Исключение ошибки аргумента*/
 		return NULL;
